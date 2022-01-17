@@ -40,6 +40,11 @@ app.view('modal-create-secret', async (context) => {
   // logger.info("REST", submittedValues);
   // do stuff with submittedValues
   await ack();
+
+  // save logic
+  // use the openpgp https://github.com/jhaals/yopass/blob/master/next/src/utils.tsx
+  // store using table API https://api.slack.com/future/tables
+
   logger.info("modal ack");
   displaySecretMessage(context);
 });

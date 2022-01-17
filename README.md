@@ -1,5 +1,26 @@
 # slack-secret-message
 
+Getting Started
+===============
+- `npm install` the needed npm packages.
+- copy and rename `.env.sample` to `.env`.
+- Obtain the ENVIRONMENT variable using this [guide](https://slack.dev/bolt-js/tutorial/getting-started).
+  + Go to the Slack App page.
+  + **OAuth & Permissions** to get the *Bot User OAuth Token*
+  + **Basic Information** to get the *Signing Secret*
+  + *Slack App Token* - sorry, I forgot how to retrieve this.
+- Start development mode using `npm run dev`
+  + If you get `ECONNREFUSED` try commenting away the `socketMode`
+  + establish some connection by calling some API from the slack.
+  + Then, uncomment the `socketMode`
+- **Event Subscriptions** add in the *Request URL*
+  + Eg. `https://XXXXXX.ngrok.io/slack/events`
+  + Make sure is verified.
+- If everything works well, type `/secret` in the slack chat.
+  + It should have a pop up model.
+
+
+
 Bolt app template
 =================
 
