@@ -65,12 +65,11 @@ app.view('modal-create-secret', async (context) => {
 });
 
 app.action('button-reveal', async (context) => {
-  const { ack, logger, body, view } = context;
+  const { ack, logger, body } = context;
 
   // Acknowledge the action
   await ack();
   logger.info('reveal.value:', body.actions[0].value);
-  logger.info(body);
   
   const userId = body.user.id;
   const [uuid, decodeKey] = body.actions[0].value.split(':');
@@ -94,6 +93,10 @@ app.action('button-reveal', async (context) => {
 
     // show pop up
     await revealSecretModal(Object.assign({ store, message }, context));
+
+    // clean up
+    if (store.onetime)
+      await storeService.deleteMessage(Uuid)
   }
   catch (error) {
     logger.error({ uuid, userId, message: error.message });
@@ -103,12 +106,14 @@ app.action('button-reveal', async (context) => {
 });
 
 app.action('button-access-log', async (context) => {
-  const { ack, logger } = context;
+  const { ack, body, logger } = context;
   // Acknowledge the action
   await ack();
 
   try {
-    await accessLogModal(context);
+    const uuid = body.actions[0].value;
+    const accessLogs = await storeService.retrieveAuditTrail(uuid);
+    await accessLogModal(Object.assign({ accessLogs }, context));
   }
   catch (error) {
     logger.error(error);

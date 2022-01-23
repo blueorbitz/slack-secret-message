@@ -1,4 +1,4 @@
-module.exports = async function({ command, client, body }) {
+module.exports = async function({ accessLogs, client, body }) {
   const result = await client.views.open({
     // Pass a valid trigger_id within 3 seconds of receiving it
     trigger_id: body.trigger_id,
@@ -28,34 +28,20 @@ module.exports = async function({ command, client, body }) {
               text: '*By*'
             }
           ]
-        },
-        {
-          type: 'section',
-          fields: [
-            {
-              type: 'plain_text',
-              text: '2022-01-01 12:12:12'
-            },
-            {
-              type: 'mrkdwn',
-              text: '<@User> - Granted'
-            }
-          ]
-        },
-        {
-          type: 'section',
-          fields: [
-            {
-              type: 'plain_text',
-              text: '2022-01-01 12:12:12'
-            },
-            {
-              type: 'mrkdwn',
-              text: '<@User> - Granted'
-            }
-          ]
         }
-      ]
+      ].concat(accessLogs.map(accessLog => ({
+        type: 'section',
+        fields: [
+          {
+            type: 'plain_text',
+            text: accessLog.createdAt.toLocaleString(),
+          },
+          {
+            type: 'mrkdwn',
+            text: `<@${accessLog.userId}> - ${accessLog.valid ? 'Granted' : 'Deny'}`
+          }
+        ]
+      })))
     }
   });
   return result;

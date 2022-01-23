@@ -33,7 +33,7 @@ module.exports = async function ({ body, store, decodeKey, title }) {
               type: 'plain_text',
               text: 'Access Log',
             },
-            value: 'access_log',
+            value: `${store.uuid}`,
             action_id: 'button-access-log',
           }
         ]

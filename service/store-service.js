@@ -1,6 +1,26 @@
 const tempSecret = {};
 const tempAccess = {};
 
+/***
+ * secret schema
+ * {
+ *   uuid, channelId, title, createdAt, createdBy
+ *   rule {
+ *     users, expiry, onetime,
+ *   }
+ * }
+ * 
+ * message schema - This should be delete base on the TTL
+ * {
+ *   uuid, secretUuid, encrypted
+ * }
+ * 
+ * access schema
+ * {
+ *   uuid, secretUuid, userId, valid, createdAt,
+ * }
+ */
+
 async function createSecret({ channelId, title, encrypted, users, expiry, onetime }) {
   // TODO: DynamoDB implementation goes here
   const uuid = Math.random().toString(36).substr(2, 6) + Math.random().toString(36).substr(2, 6);
