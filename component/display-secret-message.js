@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-module.exports = async function ({ body, view, client, logger }) {
+module.exports = async function ({ body, store, decodeKey, title }) {
   const user = body['user']['id'];
   const metadata = JSON.parse(body['view']['private_metadata'])
 
@@ -11,7 +11,7 @@ module.exports = async function ({ body, view, client, logger }) {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `<@${user}> share a secret *Secret Title*`,
+          text: `<@${user}> share a secret *${title || '<Untitled Secret>'}*`,
         }
       },
       {
@@ -24,7 +24,7 @@ module.exports = async function ({ body, view, client, logger }) {
               type: 'plain_text',
               text: 'Reveal Secret'
             },
-            value: 'reveal',
+            value: `${store.uuid}:${decodeKey}`,
             action_id: 'button-reveal',
           },
           {

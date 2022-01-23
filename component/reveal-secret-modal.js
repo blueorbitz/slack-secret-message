@@ -1,4 +1,7 @@
-module.exports = async function({ command, client, body }) {
+module.exports = async function({ client, body, store, message }) {
+  const { createdAt, expiry = 0 } = store;
+  const expiredTime = new Date(createdAt.getTime());
+  expiredTime.setSeconds(expiredTime.getSeconds() + expiry);
   const result = await client.views.open({
     // Pass a valid trigger_id within 3 seconds of receiving it
     trigger_id: body.trigger_id,
@@ -20,7 +23,7 @@ module.exports = async function({ command, client, body }) {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: '*Message*\n```Secret message here```'
+            text: '*Message*\n```' + message + '```',
           }
         },
         {
@@ -28,7 +31,7 @@ module.exports = async function({ command, client, body }) {
           elements: [
             {
               type: 'plain_text',
-              text: 'This message will expired in 3 days.',
+              text: `This message will expired on ${expiredTime.toDateString()}.`,
               emoji: true
             }
           ]
