@@ -19,6 +19,14 @@ Getting Started
 - If everything works well, type `/secret` in the slack chat.
   + It should have a pop up model.
 
+Local DynamoDB Setup
+====================
+- Setup the local dynamodb using `:8000` using the following [guide](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html)
+- Run `node createDynamoTable.js` to init create the table.
+- Ensure that you have the *Access Key* available in
+  - Environment variable for `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
+  - Or, `AWS_CONFIG`.
+
 
 
 Bolt app template

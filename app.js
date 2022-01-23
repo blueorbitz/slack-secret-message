@@ -51,8 +51,8 @@ app.view('modal-create-secret', async (context) => {
     title: utils.getStateValue(modalValue, 'action-title'),
     message: utils.getStateValue(modalValue, 'action-message'),
     users: utils.getStateValue(modalValue, 'action-user'),
-    expiry: utils.getStateValue(modalValue, 'action-expiry'),
-    onetime: utils.getStateValue(modalValue, 'action-visible'),
+    expiry: parseInt(utils.getStateValue(modalValue, 'action-expiry').value),
+    onetime: utils.getStateValue(modalValue, 'action-visible').length > 0,
   };
 
   // save logic
@@ -96,7 +96,7 @@ app.action('button-reveal', async (context) => {
 
     // clean up
     if (store.onetime)
-      await storeService.deleteMessage(Uuid)
+      await storeService.deleteMessage(uuid)
   }
   catch (error) {
     logger.error({ uuid, userId, message: error.message });

@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@slack/bolt": "^3.8.1",
+    "aws-sdk": "^2.1062.0",
     "axios": "^0.24.0",
     "dotenv": "^12.0.3",
     "lodash.findkey": "^4.6.0",
     "lodash.pick": "^4.4.0",
-    "openpgp": "^5.0.1"
+    "openpgp": "^5.0.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {},
   "engines": {
