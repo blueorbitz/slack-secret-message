@@ -7,6 +7,7 @@ const createSecretModal = require('./component/create-secret-modal');
 const displaySecretMessage = require('./component/display-secret-message');
 const revealSecretModal = require('./component/reveal-secret-modal');
 const accessLogModal = require('./component/access-log-modal');
+const accessDenyModal = require('./component/access-deny-modal');
 
 // Load .env
 const dotenv = require('dotenv');
@@ -58,27 +59,46 @@ app.view('modal-create-secret', async (context) => {
   // use the openpgp https://github.com/jhaals/yopass/blob/master/next/src/utils.tsx
   const decodeKey = encryptionService.generateRandomKey();
   const encrypted = await encryptionService.encryptMessage(value.message, decodeKey);
-  const store = await storeService.secretCreate(Object.assign({ encrypted }, value));
+  const store = await storeService.createSecret(Object.assign({ encrypted }, value));
 
   displaySecretMessage(Object.assign({ store, decodeKey }, value, context));
 });
 
 app.action('button-reveal', async (context) => {
   const { ack, logger, body, view } = context;
+
   // Acknowledge the action
   await ack();
   logger.info('reveal.value:', body.actions[0].value);
+  logger.info(body);
+  
+  const userId = body.user.id;
+  const [uuid, decodeKey] = body.actions[0].value.split(':');
   
   try {
-    const [uuid, decodeKey] = body.actions[0].value.split(':');
+    const store = await storeService.retrieveSecret(uuid);
 
-    const store = await storeService.secretRetrieve(uuid);
+    // check if user is allow to view secret
+    if (!utils.isValidUser(store.users, userId))
+      throw new Error('Do not have permission to view secret');
+
+    // check if secret has expired
+    if (!utils.isValidExpiry(store.createdAt, store.expiry))
+      throw new Error('Secret has expired');
+
+    // decrypt the message
     const message = await encryptionService.decryptMessage(store.encrypted, decodeKey);
 
+    // store the access log
+    await storeService.createAuditTrail({ uuid, userId });
+
+    // show pop up
     await revealSecretModal(Object.assign({ store, message }, context));
   }
   catch (error) {
-    logger.error(error);
+    logger.error({ uuid, userId, message: error.message });
+    await storeService.createAuditTrail({ uuid, userId, valid: false });
+    await accessDenyModal(Object.assign(error, context));
   }
 });
 

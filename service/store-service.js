@@ -1,22 +1,35 @@
-const temp = {};
+const tempSecret = {};
+const tempAccess = {};
 
-async function secretCreate({ channelId, title, encrypted, users, expiry, onetime }) {
+async function createSecret({ channelId, title, encrypted, users, expiry, onetime }) {
   // TODO: DynamoDB implementation goes here
   const uuid = Math.random().toString(36).substr(2, 6) + Math.random().toString(36).substr(2, 6);
-  temp[uuid] = encrypted;
+  tempSecret[uuid] = { encrypted, users };
 
   return { uuid };
 }
 
-async function secretRetrieve(uuid) {
-  return {
-    encrypted: temp[uuid],
+async function retrieveSecret(uuid) {
+  return Object.assign({
     createdAt: new Date(),
     expiry: 3600,
-  };
+  }, tempSecret[uuid]);
+}
+
+async function createAuditTrail({ uuid, userId, valid = true }) {
+  if (tempAccess[uuid] == null)
+    tempAccess[uuid] = [];
+  tempAccess[uuid].push({ userId, createdAt: new Date(), valid });
+  return {};
+}
+
+async function retrieveAuditTrail(uuid) {
+  return tempAccess[uuid];
 }
 
 module.exports = {
-  secretCreate,
-  secretRetrieve,
+  createSecret,
+  retrieveSecret,
+  createAuditTrail,
+  retrieveAuditTrail,
 };

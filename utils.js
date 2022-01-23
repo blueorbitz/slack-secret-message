@@ -13,6 +13,20 @@ function getStateValue(values, name) {
   }
 }
 
+function isValidUser(list, userId) {
+  return list.length === 0 || list.indexOf(userId) !== -1;
+}
+
+function isValidExpiry(createdAt, expiry) {
+  const now = new Date();
+  const expiredTime = new Date(createdAt.getTime());
+  expiredTime.setSeconds(expiredTime.getSeconds() + expiry);
+
+  return now.getTime() < expiredTime.getTime();
+}
+
 module.exports = {
   getStateValue,
+  isValidUser,
+  isValidExpiry,
 };
